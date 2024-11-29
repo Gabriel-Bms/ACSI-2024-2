@@ -3,10 +3,15 @@ Pillow
 torch
 torchvision
 numpy
-matplotlib
-seaborn
-opencv-python-headless
 thop
+opencv-python-headless
+matplotlib
+torchsummary
+seaborn
 ipython
 streamlit-option-menu
 requests
+jsonlib
+random2
+torchvision
+scipygit a
