@@ -5,7 +5,7 @@ torchvision
 numpy
 matplotlib
 seaborn
-opencv-python
+opencv-python-headless
 thop
 ipython
 streamlit-option-menu
