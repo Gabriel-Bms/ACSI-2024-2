@@ -2,7 +2,8 @@ matplotlib
 networkx
 numpy
 opencv-python-headless
-pandas==2.2.3
+ipython
+pandas
 pillow
 streamlit
 streamlit-option-menu
