@@ -484,7 +484,7 @@ summary(network,(n_channels,img_size,img_size))
 #best_model_path = 'C:/Users/ldani/Documents/ACSEI/FixCaps/best_HAM10000_0923_060705'#'D:/ACSII_proyecto/FixCaps-main/augmentation/train525s8'
 #current_dir = os.getcwd()  # Obtiene el directorio actual
 #best_model_path = os.path.join(current_dir, "manati_best_HAM10000.pth")
-best_model_path = '//workspaces//blank-app//manati_best_HAM10000.pth'
+best_model_path = '/workspaces/blank-app/manati_best_HAM10000.pth'
 state_dict = torch.load(best_model_path, map_location=torch.device('cpu'))
 state_dict = torch.load(best_model_path, map_location=torch.device('cpu'))
 
