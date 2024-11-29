@@ -1,1 +1,12 @@
 streamlit
+Pillow
+torch
+torchvision
+numpy
+matplotlib
+seaborn
+opencv-python
+thop
+ipython
+streamlit-option-menu
+requests
