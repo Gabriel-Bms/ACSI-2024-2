@@ -4,7 +4,7 @@ torch
 torchvision
 numpy
 thop
-opencv-python-headless
+opencv-python
 matplotlib
 torchsummary
 seaborn
