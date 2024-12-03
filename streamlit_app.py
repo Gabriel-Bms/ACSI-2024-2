@@ -17,6 +17,7 @@ from torchvision import datasets
 from torchsummary import summary
 import seaborn as sns
 # OTHER LIBRARIES------------------------------------
+import path
 import numpy as np
 import time
 import sys
@@ -479,8 +480,10 @@ summary(network,(n_channels,img_size,img_size))
 # network.Convolution
 # network.load_state_dict(torch.load(save_PATH)).pth
 #best_model_path = 'C:/Users/ldani/Documents/ACSEI/FixCaps/best_HAM10000_0923_060705'#'D:/ACSII_proyecto/FixCaps-main/augmentation/train525s8'
-best_model_path = '/workspaces/blank-app/best_HAM10000_0923_060705.pth'
-state_dict = torch.load(best_model_path, map_location=torch.device('cpu'))
+#workspace_dir = path.cwd()  # Directorio actual del workspace
+#file_path = workspace_dir / "manati.pth"
+#best_model_path = '/workspaces/blank-app/best_HAM10000_0923_060705.pth'
+state_dict = torch.load("best_HAM10000_0923_060705.pth", map_location=torch.device('cpu'))
 
 # Cargar el state_dict ignorando las claves adicionales
 network.load_state_dict(state_dict, strict=False)

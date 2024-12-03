@@ -19,3 +19,4 @@ networkx
 seaborn
 requests
 plotly
+path
