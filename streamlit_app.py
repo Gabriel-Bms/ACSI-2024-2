@@ -2,8 +2,11 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import requests
+import base64
+from io import BytesIO
 # DEEP LEARNING LIBRARIES--------------------------
 from PIL import Image
+from datetime import datetime
 import torch
 from torchvision import transforms
 import torchvision.utils as vutils
@@ -17,8 +20,8 @@ from torchvision import datasets
 from torchsummary import summary
 import seaborn as sns
 # OTHER LIBRARIES------------------------------------
-import path
 import numpy as np
+import io
 import time
 import sys
 import os
@@ -114,15 +117,32 @@ def gradcam(network, data, device):
 
     axes[0].imshow(img_np)
     axes[0].axis('off')
-    axes[0].set_title('Original image')
+    axes[0].set_title('Imagen original')
     axes[1].imshow(heatmap_resized, cmap='jet', interpolation='bilinear')
     axes[1].axis('off')
-    axes[1].set_title('Heatmap')
+    axes[1].set_title('Mapa de Calor')
     axes[2].imshow(cv2.cvtColor(img_overlayed, cv2.COLOR_BGR2RGB))
     axes[2].axis('off')
-    axes[2].set_title('Superimposed Heatmap')
+    axes[2].set_title('Imagen superpuesta')
 
     st.pyplot(plt)
+
+    ###new
+    plt.savefig('mapa_calor.png')
+
+    # Abrir la imagen guardada con Pillow
+    imagen = Image.open('mapa_calor.png')
+    
+    # Mostrar la imagen en Streamlit
+    # st.image(img_pil, caption="Grad-CAM Result", use_column_width=True)
+
+    # Puedes también guardar la imagen en disco si lo necesitas
+    # img_pil.save("gradcam_output.png")
+    
+    # Limpiar la figura
+    # plt.close(fig)
+
+    return imagen
 
 def test_single_image(network, data_loader, device):
     network.eval()
@@ -379,7 +399,7 @@ class LayerNorm(nn.Module):
     shape (batch_size, height, width, channels) while channels_first corresponds to inputs
     with shape (batch_size, channels, height, width).
     """
-    def __init__(self, normalized_shape, eps=1e-6, data_format="channels_last"):
+    def _init_(self, normalized_shape, eps=1e-6, data_format="channels_last"):
         super().__init__()
         self.weight = nn.Parameter(torch.ones(normalized_shape))
         self.bias = nn.Parameter(torch.zeros(normalized_shape))
@@ -465,7 +485,7 @@ num_primary_units = 8
 primary_unit_size = 16 * 6 * 6  # fixme get from conv2d
 output_unit_size = 16
 img_size = 299
-mode='128'#'DS'#'128'
+mode='DS'#'DS'#'128'
 network = FixCapsNet(conv_inputs=n_channels,
                     conv_outputs=conv_outputs,
                     primary_units=num_primary_units,
@@ -479,11 +499,12 @@ summary(network,(n_channels,img_size,img_size))
 
 # network.Convolution
 # network.load_state_dict(torch.load(save_PATH)).pth
-#best_model_path = 'C:/Users/ldani/Documents/ACSEI/FixCaps/best_HAM10000_0923_060705'#'D:/ACSII_proyecto/FixCaps-main/augmentation/train525s8'
-#workspace_dir = path.cwd()  # Directorio actual del workspace
-#file_path = workspace_dir / "manati.pth"
-#best_model_path = '/workspaces/blank-app/best_HAM10000_0923_060705.pth'
-state_dict = torch.load("best_HAM10000_0923_060705.pth", map_location=torch.device('cpu'))
+# best_model_path = 'C:/Users/ldani/Documents/ACSEI/FixCaps/best_HAM10000_0923_060705'#'D:/ACSII_proyecto/FixCaps-main/augmentation/train525s8'
+# best_model_path = '/workspaces/blank-app/best_HAM10000_0923_060705.pth'
+
+
+best_model_path = 'manati_best_HAM10000.pth'
+state_dict = torch.load(best_model_path, map_location=torch.device('cpu'))
 
 # Cargar el state_dict ignorando las claves adicionales
 network.load_state_dict(state_dict, strict=False)
@@ -502,26 +523,38 @@ def predecir_clase(imagen):
     return predicted_class
 
 # MAIN CODE ========================================================================
+# usuarios_db = {}
 
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 
 if "users" not in st.session_state:
     st.session_state["users"] = {"admin": "admin123"}  # Usuario por defecto
-
+if "current_user" not in st.session_state:
+    st.session_state["current_user"] = "admin"
+if "current_password" not in st.session_state:
+    st.session_state["current_password"] = "admin123"
 if "page" not in st.session_state:
     st.session_state["page"] = "Inicio"  # Página predeterminada
+if "historial" not in st.session_state:
+    st.session_state["historial"] = {}
 
 # Funciones para autenticación
 def login_page():
+    # global usuario, clave
     st.title("Iniciar Sesión")
     st.markdown("Por favor, introduce tus credenciales para continuar.")
 
     username = st.text_input("Usuario", placeholder="Introduce tu usuario")
     password = st.text_input("Contraseña", type="password", placeholder="Introduce tu contraseña")
+    # usuario = username
+    # clave = password
 
     if st.button("Iniciar Sesión"):
         if username in st.session_state["users"] and st.session_state["users"][username] == password:
+            st.session_state["current_user"] = username  # Guardar el usuario en session_state
+            st.session_state["current_password"] = password  # Guardar la contraseña en session_state
+            
             st.session_state["authentication_status"] = True
             st.success(f"¡Bienvenido de nuevo, {username}!")
             st.session_state["page"] = "Inicio"
@@ -543,6 +576,7 @@ def signup_page():
             st.error("La contraseña debe tener al menos 6 caracteres.")
         else:
             st.session_state["users"][new_username] = new_password
+            st.session_state["historial"][new_username] = []
             st.success("¡Usuario registrado con éxito! Ahora puedes iniciar sesión.")
             st.session_state["page"] = "Login"
 
@@ -596,11 +630,32 @@ def algorithm_page():
         st.image(imagen, caption="Imagen cargada", use_column_width=True)
         st.write("Procesando la imagen...")
         clase_predicha = predecir_clase(imagen)
-        st.write(f"Predicted: {class_names[clase_predicha]}")
-        gradcam(network, imagen, device)
+        # st.write(f"Predicted: {class_names[clase_predicha]}")
+        mapa_calor = gradcam(network, imagen, device)
         # Simulación del análisis de la imagen
         import time
         time.sleep(2)
+        mensajes = {
+            0: "Predicción: **Queratosis actínica** sospechosa. Esta condición puede indicar daño solar y aumentar el riesgo de cáncer de piel. Se recomienda una evaluación dermatológica para determinar el tratamiento adecuado.",
+            1: "Predicción: **Carcinoma basocelular** sospechoso. Este tipo de cáncer de piel es generalmente lento en crecimiento y tratable, pero es fundamental que consulte a un dermatólogo para un diagnóstico y tratamiento adecuados.",
+            2: "Predicción: **Queratosis benigna**. Estas lesiones son generalmente inofensivas, pero si tiene alguna preocupación sobre su apariencia o cambios, se recomienda una consulta dermatológica para una evaluación.",
+            3: "Predicción: **Dermatofibroma**. Esta es una lesión cutánea benigna. Aunque generalmente no requieren tratamiento, si causan molestias o cambios, se recomienda consultar a un dermatólogo.",
+            4: "Predicción: **Melanoma** sospechoso. Este tipo de cáncer de piel puede ser agresivo y requiere atención médica inmediata. Se recomienda encarecidamente que consulte a un dermatólogo para un examen detallado y posibles biopsias.",
+            5: "Predicción: **Nevus melanocítico**. Generalmente son lesiones benignas, pero deben monitorearse por cualquier cambio. Si nota alteraciones en su forma o color, consulte a un dermatólogo.",
+            6: "Predicción: **Lesión vascular**. Estas lesiones pueden ser benignas, pero es importante evaluar su naturaleza. Se recomienda una consulta con un especialista para determinar el mejor enfoque."
+        }
+        st.success(mensajes[clase_predicha])
+        st.warning("Nota: Esta aplicación no reemplaza una consulta médica profesional.")
+        ###new
+        if st.button("Registrar en el historial"):
+            # Obtener la fecha y hora actuales
+            fecha_actual = datetime.now()
+
+            # Formatear la fecha y hora como un string con el formato deseado
+            fecha_formateada = fecha_actual.strftime("Hora: %H:%M - Día: %d - Mes: %m - Año: %Y")
+
+            registrar_historial(imagen, mensajes[clase_predicha], mapa_calor, fecha_formateada)
+            st.success("Imagen registrada en el historial.")
               
 def skin_lession_page():
     st.title("Lesiones de Piel")
@@ -622,14 +677,107 @@ def skin_lession_page():
     for index, lesion in enumerate(lesions):
         with cols[index % 3]:  # Distribuir imágenes en las columnas
             st.image(lesion["image"], caption=lesion["name"], use_column_width=True)
-            st.markdown(f"**{lesion['name']}**")
+            st.markdown(f"*{lesion['name']}*")
             st.write(lesion["description"])
 
+def registrar_historial(imagen, prediccion, mapa_calor, fecha):
+    # Convertir la imagen a base64 para mostrarla
+    current_user = st.session_state["current_user"]
+    # img_b64 = imagen_to_base64(imagen)
+    st.session_state["historial"][current_user].append({
+        "imagen": imagen,
+        "prediccion": prediccion,
+        "mapa_calor": mapa_calor,
+        "fecha": fecha
+    })
+    # if usuario in st.session_state["historial"]:
+    #     img_b64 = imagen_to_base64(imagen)
+    #     st.session_state["historial"][usuario].append({
+    #         "imagen": img_b64,
+    #         "prediccion": prediccion,
+    #         "mapa_calor": mapa_calor
+    #     })
+    # else:
+    #     st.error("Usuario no encontrado.")
+    
 
+    
+# Función para convertir la imagen a base64
+def imagen_to_base64(imagen):
+    
+    buffered = BytesIO()
+    imagen.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
+# Función para mostrar el historial
+# def mostrar_historial():
+#     print("Entramos a mostrar historial")
+#     current_user = st.session_state["current_user"]
+#     if current_user in st.session_state["historial"]:
+#         user_history = st.session_state["historial"][current_user]
+#         if user_history:
+#             st.title("Historial de predicciones")
+#             for index, entry in enumerate(st.session_state["historial"]):
+#                 st.image(entry["imagen"], caption=f"Imagen {index + 1}")
+#                 st.write(f"Predicción: {entry['prediccion']}")
+#                 st.image(entry["mapa_calor"], caption="Mapa de Calor")
+#         else:
+#             st.write("No tienes historial aún.")
+#     else:
+#         st.write("No se encontró historial para este usuario.")
+
+def mostrar_historial():
+    # st.title("Contacto - here")
+    # st.write("Para más información, puedes contactarnos en: [email@example.com](mailto:email@example.com)")
+    # st.image(imagen, caption="Imagen cargada", use_column_width=True)
+    # print("Entramos a mostrar historial")
+    
+    # Verifica si hay un usuario en la sesión
+    if "current_user" not in st.session_state:
+        st.write("No has iniciado sesión.")
+        return
+    
+    current_user = st.session_state["current_user"]
+    
+    # Verifica si el usuario tiene un historial
+    if current_user in st.session_state["historial"]:
+        user_history = st.session_state["historial"][current_user]
+        
+        if user_history:  # Si el historial no está vacío
+            st.title("Historial de predicciones")
+            
+            # Itera solo sobre el historial del usuario
+            col1, col2, col3 = st.columns([1, 1, 1])
+            for index, entry in enumerate(user_history):
+                # with col2:
+                st.markdown("<h3 style='text-align: center;'>Predicción {}</h3>".format(index + 1), unsafe_allow_html=True)
+    
+                # st.image(entry["imagen"], caption=f"Imagen {index + 1}", width=200)
+                # st.write(entry['prediccion'])
+
+
+                st.markdown("<h4 style='text-align: center;'>Mapa de Calor</h4>", unsafe_allow_html=True)
+    
+                st.image(entry["mapa_calor"], caption="Mapa de Calor")
+                st.write(entry['prediccion'])
+                st.write(entry["fecha"])
+                st.write("---")
+                # st.markdown("<h5 style='text-align: center;'> {}</h5>".format(entry['fecha']), unsafe_allow_html=True)
+    
+        else:
+            st.write("No tienes historial aún.")
+    else:
+        st.write("No se encontró historial para este usuario.")
+    # st.title("Historial de predicciones")
+    # for index, entry in enumerate(st.session_state["historial"]):
+    #     st.image(entry["imagen"], caption=f"Imagen {index + 1}")
+    #     st.write(f"Predicción: {entry['prediccion']}")
+    #     st.image(entry["mapa_calor"], caption="Mapa de Calor")
+######################
 selected = option_menu(
     menu_title=None,
-    options=["Inicio", "Algoritmo", "Lesiones de piel", "Contacto", "Registrarse", "Inicio Sesión"],
-    icons=["house", "capsule", "heart-pulse-fill", "envelope", "person-add", "person-check"],
+    options=["Inicio", "Registrarse", "Inicio Sesión", "Lesiones de piel", "Algoritmo", "Historial", "Contacto"],
+    icons=["house","person-add", "person-check", "heart-pulse-fill","capsule", "floppy2","envelope"],
     menu_icon="cast",
     default_index=0,
     orientation="horizontal",
@@ -648,7 +796,8 @@ elif selected == "Registrarse":
     st.session_state["page"] = "Signup"
 elif selected == "Inicio Sesión":
     st.session_state["page"] = "Login"
-
+elif selected == "Historial":
+    st.session_state["page"] = "History"
 # Renderizado dinámico de páginas
 if st.session_state["page"] == "Inicio":
     main_page()
@@ -658,8 +807,27 @@ elif st.session_state["page"] == "Lesiones":
     skin_lession_page()
 elif st.session_state["page"] == "Contacto":
     st.title("Contacto")
-    st.write("Para más información, puedes contactarnos en: [email@example.com](mailto:email@example.com)")
+
+    # Información de las 5 personas
+    personas = [
+        {"nombre": "Maria Cristina", "apellido": "Orihuela", "email": "a20202517@pucp.edu.pe"},
+        {"nombre": "Jesus", "apellido": "Juarez", "email": "a20203452@pucp.edu.pe"},
+        {"nombre": "Luis", "apellido": "Chirre", "email": "luis.chirre@pucp.edu.pe"},
+        {"nombre": "Gabriel", "apellido": "Marcos", "email": "a20190076@pucp.edu.pe"},
+        {"nombre": "Sergio", "apellido": "Moreno", "email": "sergio.moreno@upch.pe"}
+    ]
+
+    # Mostrar la información de cada persona
+    for persona in personas:
+        st.write(f"**{persona['nombre']} {persona['apellido']}**")
+        st.write(f"Correo: {persona['email']}")
+        st.write("---")  # Separador entre personas
+
+    # Mostrar enlace general a GitHub
+    st.write("Para más información, puedes consultar el repositorio de GitHub: [Repositorio GitHub](https://github.com/SergioMoreno1060/Aplicaciones-Clinicas-en-Senales-e-Imagenes---Grupo-2.git)")
 elif st.session_state["page"] == "Signup":
     signup_page()
 elif st.session_state["page"] == "Login":
     login_page()
+elif st.session_state["page"] == "History":
+    mostrar_historial()
