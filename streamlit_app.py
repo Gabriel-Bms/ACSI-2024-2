@@ -603,21 +603,20 @@ def main_page():
         @import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet');
         .title {
-            font-size: 80px !important;
+            font-size: 85px !important;
             font-family: 'Poppins', sans-serif !important; 
-            color: #FFFFFF;
-            text-align: left;
+            color: #FFFFFF !important;
+            text-align: left !important;
             font-weight: 800 !important; 
-            margin-bottom: 5px;
+            margin-bottom: 5px !important;
         }
         .subtitle {
-            font-size: 60px; 
-            color: #d1ddf2; 
-            text-align: left;
-            margin-top: 0px;
-            font-family: "Bree Serif", serif;
-            font-weight: 700;
-            font-style: normal;
+            font-size: 60px !important; 
+            color: #d1ddf2 !important; 
+            text-align: left !important;
+            margin-top: 0px !important;
+            font-family: "Bree Serif", serif !imporant;
+            font-weight: 700 !important;
         }
         .text-normal {
             font-size: 18px;
