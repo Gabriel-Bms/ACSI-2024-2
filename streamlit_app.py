@@ -580,12 +580,11 @@ def signup_page():
             st.success("¡Usuario registrado con éxito! Ahora puedes iniciar sesión.")
             st.session_state["page"] = "Login"
 
-# Función para la página principal
 def main_page():
-    file_id = "1fSc3BbF_ZVC0_3Y0vs9jmga4bgWuF3CU"
-    url = f"https://drive.google.com/uc?export=view&id={file_id}"
+    # view&id="ID"
+    url = f"https://drive.google.com/uc?export=view&id=1fSc3BbF_ZVC0_3Y0vs9jmga4bgWuF3CU"
     response = requests.get(url)
-    
+
     # Fondo personalizado
     st.markdown("""
         <style>
@@ -600,25 +599,58 @@ def main_page():
     
     st.markdown("""
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+        @import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet');
         .title {
-            font-size: 84px;
-            font-family: 'Helvetica', sans-serif; 
+            font-size: 80px;
+            font-family: 'Poppins', sans-serif; 
             color: #FFFFFF;
-            text-align: left; 
-            margin-bottom: 30px;
+            text-align: left;
+            font-weight: 800; 
+            margin-bottom: 5px;
         }
+        .subtitle {
+            font-size: 60px; 
+            color: #d1ddf2; 
+            text-align: left;
+            margin-top: 0px;
+            font-family: "Bree Serif", serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+        .text-normal {
+            font-size: 18px;
+            font-family: 'Montserrat', sans-serif; 
+            color: #000000; 
+            text-align: justify;
+            line-height: 1.6;
+            margin-top: 0px;
+            font-weight: 500;
+        }
+        .text-normal2 {
+            font-size: 30px;
+            font-family: 'Montserrat', sans-serif; 
+            color: #2b2d42; 
+            text-align: justify;
+            line-height: 1.6;
+            font-weight: 650;
+            margin-bottom: 0px;
+        }       
         </style>
         """, unsafe_allow_html=True)
+    
+    st.markdown('<h1 class="title">DermaFixApp</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Clasificador de lesiones de piel</p>', unsafe_allow_html=True)
 
-    st.markdown('<h1 class="title">FixCaps:<br>Clasificador de lesiones de piel</h1>', unsafe_allow_html=True)
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1])
     with col1: 
-        st.image(response.content,width=400)
+        st.image(response.content,width=500)
     with col2:
         st.markdown("""
-        <div style="background-color: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; border: 2px solid #ddd;">
-            <h3 style="color: #000;">Análisis de Tumores en la Piel</h3>
-            <p>El cáncer de piel es uno de los tipos de cáncer más comunes diagnosticados en los Estados Unidos. Un informe ha mostrado que la tasa de supervivencia a cinco años del melanoma maligno localizado es del 99% cuando se diagnostica y trata de manera temprana, mientras que la tasa de supervivencia del melanoma avanzado es solo del 25%<br><br>Por lo tanto, es particularmente importante detectar y clasificar imágenes dermatoscópicas para que el cáncer de piel pueda ser diagnosticado de manera temprana.</p>
+        <div style="background-color: rgba(148,185,255,0.4); padding: 20px; border-radius: 15px;">
+            <h3 class="text-normal2">Análisis de Tumores en la Piel</h3>
+            <p class="text-normal">El cáncer de piel es uno de los tipos de cáncer más comunes diagnosticados en los Estados Unidos. Un informe ha mostrado que la tasa de supervivencia a cinco años del melanoma maligno localizado es del 99% cuando se diagnostica y trata de manera temprana, mientras que la tasa de supervivencia del melanoma avanzado es solo del 25%<br><br>Por lo tanto, es particularmente importante detectar y clasificar imágenes dermatoscópicas para que el cáncer de piel pueda ser diagnosticado de manera temprana.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -658,27 +690,141 @@ def algorithm_page():
             st.success("Imagen registrada en el historial.")
               
 def skin_lession_page():
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+        @import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet');
+        .image-title {
+            font-size: 55px; 
+            color: #4F6C77; 
+            text-align: left;
+            margin-top: 0px;
+            font-family: "Bree Serif", serif;
+            font-weight: 600;
+            font-style: normal;
+        }
+        .image-subtitle {
+            font-size: 30px;
+            font-family: 'Montserrat', sans-serif; 
+            color: #9EABB3; 
+            text-align: left;
+            line-height: 1.6;
+            font-weight: 600;
+            margin-bottom: 0px;
+        }
+        .image-text {
+            font-size: 20px;
+            font-family: 'Montserrat', sans-serif; 
+            color: #EAEEEF; 
+            text-align: justify;
+            line-height: 1.6;
+            margin-top: 0px;
+            font-weight: 500;      
+        }      
+        </style>
+        """, unsafe_allow_html=True)
+    lmel = f"https://drive.google.com/uc?export=view&id=1yJtYnfZJCqghsvLrrd-doex6fDwCP9yT"
+    laki = f"https://drive.google.com/uc?export=view&id=1Imta7WJsLPuxJe-3LVVxmLhT0ka7ewfv"
+    lbcc = f"https://drive.google.com/uc?export=view&id=1jTp2o6JSYCqMdOErJ_sY5VWaeckP89Fc"
+    lbkl = f"https://drive.google.com/uc?export=view&id=1TR7_DzZcvvjnbPIO0IRlWvDGK_giDM13"
+    ldfr = f"https://drive.google.com/uc?export=view&id=1USu5-UKybGuD8wRTugMZMS8DnJbOcNcg"
+    lnev = f"https://drive.google.com/uc?export=view&id=1ZkRBTzF5MKkphBsVKrNYK1z8xDiX7Lpl"
+    lvas = f"https://drive.google.com/uc?export=view&id=1kOFmcwY1HxGMPiOec3zAglkCTuo_ae-i"
+    
+    imel = requests.get(lmel)
+    iaki = requests.get(laki)
+    ibcc = requests.get(lbcc)
+    ibkl = requests.get(lbkl)
+    idfr = requests.get(ldfr)
+    inev = requests.get(lnev)
+    ivas = requests.get(lvas)
+
     st.title("Lesiones de Piel")
     st.write("A continuación, te presentamos los principales tipos de lesiones de piel. Haz clic en una imagen para obtener más detalles.")
-
-    # Datos de las lesiones
-    lesions = [
-        {"name": "Melanoma", "image": "https://www.isdin.com/es/blog/wp-content/uploads/2024/05/image-4-1-1-900x463.png", "description": "Lesión cutánea peligrosa que puede propagarse rápidamente."},
-        {"name": "Carcinoma de células basales", "image": "https://via.placeholder.com/150", "description": "Forma más común de cáncer de piel, crecimiento lento."},
-        {"name": "Carcinoma de células escamosas", "image": "https://via.placeholder.com/150", "description": "Tipo de cáncer de piel que puede ser agresivo si no se trata."},
-        {"name": "Quiste Sebáceo", "image": "https://via.placeholder.com/150", "description": "Bulto no canceroso debajo de la piel, relleno de grasa."},
-        {"name": "Lentigo Solar", "image": "https://via.placeholder.com/150", "description": "Manchas oscuras en la piel causadas por la exposición al sol."},
-        {"name": "Queratosis Actínica", "image": "https://via.placeholder.com/150", "description": "Lesión escamosa precancerosa causada por la exposición al sol."},
-        {"name": "Nevus", "image": "https://via.placeholder.com/150", "description": "Lunar o marca de nacimiento que puede variar en tamaño y color."},
+    
+    image_data = [
+        (
+            imel.content,
+            "Melanoma Cutáneo",
+            "Maligna y altamente agresiva, puede originar metástasis",
+            (
+                "El melanoma es un tipo agresivo de cáncer de piel que se origina en los melanocitos. "
+                "Puede deberse al daño por radiación UV o factores genéticos. Es peligroso por su "
+                "rápida capacidad para metastatizar. Si no se detecta y trata a tiempo, puede "
+                "propagarse a otros órganos, siendo potencialmente mortal."
+            ),
+        ),
+        (
+            iaki.content,
+            "Queratosis Actínica",
+            "Precancerosa, puede evolucionar a carcinoma espinocelular",
+            (
+                "La queratosis actínica es una lesión precancerosa causada por la exposición prolongada al sol. "
+                "Puede evolucionar a carcinoma espinocelular si no se trata. Aparece como parches ásperos o "
+                "escamosos, generalmente en áreas expuestas al sol como la cara y las manos."
+            ),
+        ),
+        (
+            ibcc.content,
+            "Carcinoma de células basales",
+            "Maligna y bastante común, poca capacidad de diseminarse",
+            (
+                "El carcinoma de células basales es el tipo de cáncer de piel más común. Generalmente, es causado "
+                "por la exposición repetida a los rayos UV. Aunque rara vez se disemina, puede destruir tejidos "
+                "circundantes si no se trata."
+            ),
+        ),
+        (
+            ibkl.content,
+            "Queratosis Benigna",
+            "Lesión Benigna",
+            (
+                "La queratosis benigna es un crecimiento no canceroso que aparece con el envejecimiento de la piel. "
+                "Suele tener una superficie rugosa o lisa, y puede ser marrón, negro o claro."
+            ),
+        ),
+        (
+            idfr.content,
+            "Dermato-<br>fibroma",
+            "Lesión Benigna",
+            (
+                "El dermatofibroma es un pequeño nódulo benigno, generalmente duro, que aparece tras un traumatismo menor "
+                "como una picadura de insecto. Es inofensivo y no requiere tratamiento a menos que cause molestias."
+            ),
+        ),
+        (
+            inev.content,
+            "Nevos Melanocíticos",
+            "Lesión Benigna",
+            (
+                "Los nevos melanocíticos, o lunares, son proliferaciones benignas de melanocitos. Aunque la mayoría son "
+                "inofensivos, es importante vigilar cambios, ya que algunos pueden transformarse en melanoma."
+            ),
+        ),
+        (
+            ivas.content,
+            "Lesiones Vasculares",
+            "Lesión Benigna",
+            (
+                "Las lesiones vasculares son anomalías de los vasos sanguíneos que se presentan en la piel. "
+                "Pueden variar en apariencia y son generalmente benignas."
+            ),
+        ),
     ]
 
-    # Mostrar las lesiones en un formato de rejilla
-    cols = st.columns(3)  # Configurar 3 columnas para organizar las imágenes
-    for index, lesion in enumerate(lesions):
-        with cols[index % 3]:  # Distribuir imágenes en las columnas
-            st.image(lesion["image"], caption=lesion["name"], use_column_width=True)
-            st.markdown(f"*{lesion['name']}*")
-            st.write(lesion["description"])
+    # Mostrar imágenes en 3 columnas
+    num_cols = 3
+    for i in range(0, len(image_data), num_cols):
+        cols = st.columns(num_cols)
+        for j, col in enumerate(cols):
+            if i + j < len(image_data):
+                image, title, subtitle, text = image_data[i + j]
+                with col:
+                    col.image(image)  # Mostrar imagen sin `use_column_width`
+                    col.markdown(f"<div class='image-title'>{title}</div>", unsafe_allow_html=True)
+                    col.markdown(f"<div class='image-subtitle'>{subtitle}</div>", unsafe_allow_html=True)
+                    col.markdown(f"<div class='image-text'>{text}</div>", unsafe_allow_html=True)
 
 def registrar_historial(imagen, prediccion, mapa_calor, fecha):
     # Convertir la imagen a base64 para mostrarla
@@ -700,31 +846,11 @@ def registrar_historial(imagen, prediccion, mapa_calor, fecha):
     # else:
     #     st.error("Usuario no encontrado.")
     
-
-    
-# Función para convertir la imagen a base64
-def imagen_to_base64(imagen):
+def imagen_to_base64(imagen):   # Función para convertir la imagen a base64
     
     buffered = BytesIO()
     imagen.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
-
-# Función para mostrar el historial
-# def mostrar_historial():
-#     print("Entramos a mostrar historial")
-#     current_user = st.session_state["current_user"]
-#     if current_user in st.session_state["historial"]:
-#         user_history = st.session_state["historial"][current_user]
-#         if user_history:
-#             st.title("Historial de predicciones")
-#             for index, entry in enumerate(st.session_state["historial"]):
-#                 st.image(entry["imagen"], caption=f"Imagen {index + 1}")
-#                 st.write(f"Predicción: {entry['prediccion']}")
-#                 st.image(entry["mapa_calor"], caption="Mapa de Calor")
-#         else:
-#             st.write("No tienes historial aún.")
-#     else:
-#         st.write("No se encontró historial para este usuario.")
 
 def mostrar_historial():
     # st.title("Contacto - here")
@@ -773,7 +899,7 @@ def mostrar_historial():
     #     st.image(entry["imagen"], caption=f"Imagen {index + 1}")
     #     st.write(f"Predicción: {entry['prediccion']}")
     #     st.image(entry["mapa_calor"], caption="Mapa de Calor")
-######################
+######################---------------------------------------------------
 selected = option_menu(
     menu_title=None,
     options=["Inicio", "Registrarse", "Inicio Sesión", "Lesiones de piel", "Algoritmo", "Historial", "Contacto"],
